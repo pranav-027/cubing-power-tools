@@ -25,8 +25,9 @@ export default function TimeTracker() {
   const handleTotalTimeChange = (value) => {
     value = value.replace(/\D/g, "");
     setTotalTimeInput(value ? formatTimeInput(value) : "");
-    setTotalTime(value ? parseTime(formatTimeInput(value)) : 0);
-    setRemainingTime(value ? parseTime(formatTimeInput(value)) : 0);
+    let parsedTime = value ? parseTime(formatTimeInput(value)) : 0;
+    setTotalTime(parsedTime);
+    setRemainingTime(parsedTime);
   };
 
   const formatTimeInput = (value) => {
@@ -40,12 +41,13 @@ export default function TimeTracker() {
     if (!timeString) return 0;
     let [min, sec] = timeString.split(":");
     let [seconds, ms] = sec.split(".");
-    return (parseInt(min) * 60 * 1000) + (parseInt(seconds) * 1000) + parseInt(ms);
+    return (parseInt(min) * 60 * 1000) + (parseInt(seconds) * 1000) + (parseInt(ms) * 10);
   };
 
   const calculateRemainingTime = (newTimes) => {
     let usedTime = newTimes.reduce((acc, time) => acc + parseTime(time), 0);
-    setRemainingTime(totalTime - usedTime);
+    let remaining = totalTime - usedTime;
+    setRemainingTime(Math.max(remaining, 0));
   };
 
   const formatRemainingTime = (ms) => {
@@ -53,7 +55,7 @@ export default function TimeTracker() {
     let absMs = Math.abs(ms);
     let minutes = Math.floor(absMs / 60000);
     let seconds = Math.floor((absMs % 60000) / 1000);
-    let milliseconds = Math.floor((absMs % 1000) / 10);
+    let milliseconds = Math.floor((absMs % 1000) / 10); // Keep only two decimal places
     let formattedTime = `${minutes}:${String(seconds).padStart(2, "0")}.${String(milliseconds).padStart(2, "0")}`;
     return isNegative ? `-${formattedTime}` : formattedTime;
   };
