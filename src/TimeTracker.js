@@ -9,6 +9,7 @@ export default function TimeTracker() {
   const [totalTime, setTotalTime] = useState(0);
   const [times, setTimes] = useState(["", "", ""]);
   const [remainingTime, setRemainingTime] = useState(0);
+  const [lastFocused, setLastFocused] = useState(null);
 
   useEffect(() => {
     setRemainingTime(totalTime);
@@ -28,6 +29,16 @@ export default function TimeTracker() {
     let parsedTime = value ? parseTime(formatTimeInput(value)) : 0;
     setTotalTime(parsedTime);
     setRemainingTime(parsedTime);
+  };
+
+  const handleInputFocus = (index) => {
+    if (lastFocused !== index) {
+      let newTimes = [...times];
+      newTimes[index] = "";
+      setTimes(newTimes);
+      setLastFocused(index);
+      calculateRemainingTime(newTimes);
+    }
   };
 
   const formatTimeInput = (value) => {
@@ -81,6 +92,7 @@ export default function TimeTracker() {
                 type="text"
                 value={time}
                 onChange={(e) => handleInputChange(index, e.target.value)}
+                onFocus={() => handleInputFocus(index)}
                 placeholder="0:00.00"
                 inputMode="numeric"
               />
