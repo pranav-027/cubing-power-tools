@@ -9,7 +9,6 @@ export default function TimeTracker() {
   const [totalTime, setTotalTime] = useState(0);
   const [times, setTimes] = useState(["", "", ""]);
   const [remainingTime, setRemainingTime] = useState(0);
-  const [lastFocused, setLastFocused] = useState(null);
 
   useEffect(() => {
     setRemainingTime(totalTime);
@@ -31,14 +30,19 @@ export default function TimeTracker() {
     setRemainingTime(parsedTime);
   };
 
-  const handleInputFocus = (index) => {
-    if (lastFocused !== index) {
-      let newTimes = [...times];
+  const handleInputFocus = (index, event) => {
+    setTimes((prevTimes) => {
+      let newTimes = [...prevTimes];
       newTimes[index] = "";
-      setTimes(newTimes);
-      setLastFocused(index);
-      calculateRemainingTime(newTimes);
-    }
+      return newTimes;
+    });
+
+    setRemainingTime((prev) => prev);
+
+    // Move cursor to the end
+    setTimeout(() => {
+      event.target.setSelectionRange(event.target.value.length, event.target.value.length);
+    }, 0);
   };
 
   const formatTimeInput = (value) => {
@@ -87,12 +91,12 @@ export default function TimeTracker() {
         <Card className="card">
           {times.map((time, index) => (
             <div key={index} className="input-group">
-              <Label>Solve {index + 1}:</Label>
+              <Label>Solve {index + 1}</Label>
               <Input
                 type="text"
                 value={time}
                 onChange={(e) => handleInputChange(index, e.target.value)}
-                onFocus={() => handleInputFocus(index)}
+                onFocus={(e) => handleInputFocus(index, e)}
                 placeholder="0:00.00"
                 inputMode="numeric"
               />
@@ -106,3 +110,4 @@ export default function TimeTracker() {
     </div>
   );
 }
+// testing
