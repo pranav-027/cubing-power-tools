@@ -12,7 +12,7 @@ export default function TimeTracker() {
 
   useEffect(() => {
     setRemainingTime(totalTime);
-  }, [totalTime]);
+  }, [totalTime, times]);
 
   const handleInputChange = (index, value) => {
     value = value.replace(/\D/g, "");
@@ -27,7 +27,7 @@ export default function TimeTracker() {
     setTotalTimeInput(value ? formatTimeInput(value) : "");
     let parsedTime = value ? parseTime(formatTimeInput(value)) : 0;
     setTotalTime(parsedTime);
-    setRemainingTime(parsedTime);
+    setRemainingTime(parsedTime); // Modified
   };
 
   const handleInputFocus = (index, event) => {
